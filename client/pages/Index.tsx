@@ -925,9 +925,11 @@ export default function Index() {
         <div
           className={`prose prose-sm max-w-none ${isDarkMode ? 'prose-invert' : ''}`}
           style={{
-            // Custom styles for links and lists
+            // Custom styles for links, lists, and other elements
             '--tw-prose-links': isDarkMode ? '#60a5fa' : '#2563eb',
             '--tw-prose-bold': isDarkMode ? '#ffffff' : '#111827',
+            '--tw-prose-headings': isDarkMode ? '#ffffff' : '#111827',
+            '--tw-prose-body': isDarkMode ? '#e5e7eb' : '#374151',
           }}
           dangerouslySetInnerHTML={{ __html: safeHTML }}
         />
