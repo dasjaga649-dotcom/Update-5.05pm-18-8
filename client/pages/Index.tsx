@@ -1580,35 +1580,68 @@ export default function Index() {
                               </div>
                             );
                           } else {
-                            // Process as markdown/plain text
-                            const formatted = formatAnswerText(answer, darkMode);
-                            return (
-                              <div>
-                                <div className="prose-sm text-gray-900 leading-relaxed max-w-full break-words">
-                                  {formatted.formattedText}
-                                </div>
-                                {/* Display slideshow for extracted images */}
-                                {formatted.slideshowImages && formatted.slideshowImages.length > 0 && (
-                                  <AutoImageSlideshow images={formatted.slideshowImages} />
-                                )}
-                                {/* Page links are now handled inline in the text, no separate section needed */}
-                                {/* Show Hutech logo when no images are present */}
-                                {(!message.response?.related_content ||
-                                  message.response.related_content.length ===
-                                    0) && (
-                                  <div className="mt-4 flex items-center gap-2 opacity-70">
-                                    <img
-                                      src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                                      alt="Hutech Solutions"
-                                      className="h-6 w-auto"
-                                    />
-                                    <span className="text-xs text-gray-500">
-                                      Powered by Hutech AI
-                                    </span>
+                            // Check if answer contains markdown links
+                            const hasMarkdownLinksinAnswer = hasMarkdownLinks(answer);
+
+                            if (hasMarkdownLinksinAnswer) {
+                              // Parse and render markdown links
+                              const parsedContent = parseMarkdownLinks(answer);
+                              return (
+                                <div>
+                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
+                                    darkMode ? "text-gray-100" : "text-gray-900"
+                                  }`}>
+                                    {parsedContent.map((part, index) => (
+                                      <span key={index}>{part}</span>
+                                    ))}
                                   </div>
-                                )}
-                              </div>
-                            );
+                                  {/* Show Hutech logo when no images are present */}
+                                  {(!message.response?.related_content ||
+                                    message.response.related_content.length === 0) && (
+                                    <div className="mt-4 flex items-center gap-2 opacity-70">
+                                      <img
+                                        src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                                        alt="Hutech Solutions"
+                                        className="h-6 w-auto"
+                                      />
+                                      <span className="text-xs text-gray-500">
+                                        Powered by Hutech AI
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            } else {
+                              // Process as regular markdown/plain text
+                              const formatted = formatAnswerText(answer, darkMode);
+                              return (
+                                <div>
+                                  <div className="prose-sm text-gray-900 leading-relaxed max-w-full break-words">
+                                    {formatted.formattedText}
+                                  </div>
+                                  {/* Display slideshow for extracted images */}
+                                  {formatted.slideshowImages && formatted.slideshowImages.length > 0 && (
+                                    <AutoImageSlideshow images={formatted.slideshowImages} />
+                                  )}
+                                  {/* Page links are now handled inline in the text, no separate section needed */}
+                                  {/* Show Hutech logo when no images are present */}
+                                  {(!message.response?.related_content ||
+                                    message.response.related_content.length ===
+                                      0) && (
+                                    <div className="mt-4 flex items-center gap-2 opacity-70">
+                                      <img
+                                        src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                                        alt="Hutech Solutions"
+                                        className="h-6 w-auto"
+                                      />
+                                      <span className="text-xs text-gray-500">
+                                        Powered by Hutech AI
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
                           }
                         })()}
                       </div>
