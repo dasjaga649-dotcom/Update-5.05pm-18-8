@@ -42,7 +42,8 @@ export const HorizontalScrollableCards = ({
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
       setShowLeftArrow(scrollLeft > 0);
       setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
     }
@@ -62,7 +63,7 @@ export const HorizontalScrollableCards = ({
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-all duration-200 transform hover:scale-110 shadow-lg hover:shadow-xl"
             style={{
               backgroundColor: "#176CAE",
-              backdropFilter: "blur(8px)"
+              backdropFilter: "blur(8px)",
             }}
           >
             <ChevronLeft size={20} className="text-white" />
@@ -76,7 +77,7 @@ export const HorizontalScrollableCards = ({
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-all duration-200 transform hover:scale-110 shadow-lg hover:shadow-xl"
             style={{
               backgroundColor: "#176CAE",
-              backdropFilter: "blur(8px)"
+              backdropFilter: "blur(8px)",
             }}
           >
             <ChevronRight size={20} className="text-white" />
@@ -99,8 +100,8 @@ export const HorizontalScrollableCards = ({
               key={index}
               onClick={() => handleCardClick(item.url)}
               className={`flex-shrink-0 w-64 cursor-pointer group transform transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                isDarkMode 
-                  ? "bg-gray-800 border-gray-600 hover:border-gray-500" 
+                isDarkMode
+                  ? "bg-gray-800 border-gray-600 hover:border-gray-500"
                   : "bg-white border-gray-200 hover:border-gray-300"
               } border rounded-lg overflow-hidden shadow-md`}
             >

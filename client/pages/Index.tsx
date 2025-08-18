@@ -149,7 +149,8 @@ export default function Index() {
           if (chatContainerRef.current) {
             const container = chatContainerRef.current;
             const bottomOffset = 200; // Account for recommendations and input area
-            container.scrollTop = container.scrollHeight - container.clientHeight + bottomOffset;
+            container.scrollTop =
+              container.scrollHeight - container.clientHeight + bottomOffset;
           }
         });
       };
@@ -166,7 +167,8 @@ export default function Index() {
           const container = chatContainerRef.current;
           if (container) {
             const bottomOffset = 180; // Account for recommendations and input area
-            container.scrollTop = container.scrollHeight - container.clientHeight + bottomOffset;
+            container.scrollTop =
+              container.scrollHeight - container.clientHeight + bottomOffset;
           }
         });
       };
@@ -313,13 +315,13 @@ export default function Index() {
     // Split text into words while preserving formatting
     const words = text.split(/\s+/);
     let currentWordIndex = 0;
-    let displayText = '';
+    let displayText = "";
 
     const typeInterval = setInterval(() => {
       if (currentWordIndex < words.length) {
         // Add the current word
         if (currentWordIndex > 0) {
-          displayText += ' ';
+          displayText += " ";
         }
         displayText += words[currentWordIndex];
 
@@ -346,7 +348,7 @@ export default function Index() {
       const parts = line.split(/(\*\*[^*]*\*\*)/g);
 
       const formattedLine = parts.map((part, index) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
+        if (part.startsWith("**") && part.endsWith("**")) {
           // Bold text
           const content = part.slice(2, -2);
           return (
@@ -870,26 +872,34 @@ export default function Index() {
   const cleanLinkText = (text: string): string => {
     // Remove parenthetical text and extra information
     let cleaned = text
-      .replace(/\s*\([^)]*\)\s*$/g, '') // Remove anything in parentheses at the end
-      .replace(/\|\s*Hutech\s*Solutions.*$/i, '') // Remove "| Hutech Solutions" and everything after
-      .replace(/Brochures\s*\|\s*Hutech\s*Solutions/gi, 'Brochures - Hutech Solutions') // Clean up title format
-      .replace(/\s*\|\s*/g, ' - ') // Replace pipes with dashes
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .replace(/\s*Brochure$/, ' Brochure') // Ensure "Brochure" is properly spaced
+      .replace(/\s*\([^)]*\)\s*$/g, "") // Remove anything in parentheses at the end
+      .replace(/\|\s*Hutech\s*Solutions.*$/i, "") // Remove "| Hutech Solutions" and everything after
+      .replace(
+        /Brochures\s*\|\s*Hutech\s*Solutions/gi,
+        "Brochures - Hutech Solutions",
+      ) // Clean up title format
+      .replace(/\s*\|\s*/g, " - ") // Replace pipes with dashes
+      .replace(/\s+/g, " ") // Replace multiple spaces with single space
+      .replace(/\s*Brochure$/, " Brochure") // Ensure "Brochure" is properly spaced
       .trim();
 
     // If the text is still too long or repetitive, use a simpler version
-    if (cleaned.length > 60 || cleaned.includes('Hutech SolutionsHutech Solutions')) {
-      if (cleaned.toLowerCase().includes('brochure')) {
+    if (
+      cleaned.length > 60 ||
+      cleaned.includes("Hutech SolutionsHutech Solutions")
+    ) {
+      if (cleaned.toLowerCase().includes("brochure")) {
         // Extract just the brochure name without company suffix
-        const brochureName = cleaned.replace(/\s*-\s*Hutech\s*Solutions.*$/i, '').trim();
+        const brochureName = cleaned
+          .replace(/\s*-\s*Hutech\s*Solutions.*$/i, "")
+          .trim();
         if (brochureName.length > 0) {
           cleaned = brochureName;
         } else {
-          cleaned = 'Brochures - Hutech Solutions';
+          cleaned = "Brochures - Hutech Solutions";
         }
-      } else if (cleaned.toLowerCase().includes('service')) {
-        cleaned = 'Services - Hutech Solutions';
+      } else if (cleaned.toLowerCase().includes("service")) {
+        cleaned = "Services - Hutech Solutions";
       } else {
         // Extract the first meaningful part
         const parts = cleaned.split(/[\-\|]/);
@@ -909,31 +919,40 @@ export default function Index() {
       // If content has HTML, sanitize and render safely
       // Enhanced sanitization - only allow safe tags
       let safeHTML = content
-        .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
-        .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframe tags
-        .replace(/javascript:/gi, '') // Remove javascript: URLs
-        .replace(/on\w+="[^"]*"/gi, '') // Remove event handlers
-        .replace(/on\w+='[^']*'/gi, '') // Remove event handlers
+        .replace(/<script[^>]*>.*?<\/script>/gi, "") // Remove script tags
+        .replace(/<iframe[^>]*>.*?<\/iframe>/gi, "") // Remove iframe tags
+        .replace(/javascript:/gi, "") // Remove javascript: URLs
+        .replace(/on\w+="[^"]*"/gi, "") // Remove event handlers
+        .replace(/on\w+='[^']*'/gi, "") // Remove event handlers
         // Enhance image tags with proper styling
-        .replace(/<img([^>]*?)>/gi, '<img$1 style="max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;">')
+        .replace(
+          /<img([^>]*?)>/gi,
+          '<img$1 style="max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;">',
+        )
         // Add proper target and rel attributes to links
-        .replace(/<a([^>]*?)href="([^"]*)"([^>]*?)>/gi, '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">')
+        .replace(
+          /<a([^>]*?)href="([^"]*)"([^>]*?)>/gi,
+          '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">',
+        );
 
       // Clean up link text in HTML content
-      safeHTML = safeHTML.replace(/<a([^>]*)>([^<]+)<\/a>/gi, (match, attributes, linkText) => {
-        const cleanedText = cleanLinkText(linkText);
-        return `<a${attributes}>${cleanedText}</a>`;
-      });
+      safeHTML = safeHTML.replace(
+        /<a([^>]*)>([^<]+)<\/a>/gi,
+        (match, attributes, linkText) => {
+          const cleanedText = cleanLinkText(linkText);
+          return `<a${attributes}>${cleanedText}</a>`;
+        },
+      );
 
       return (
         <div
-          className={`prose prose-sm max-w-none ${isDarkMode ? 'prose-invert' : ''}`}
+          className={`prose prose-sm max-w-none ${isDarkMode ? "prose-invert" : ""}`}
           style={{
             // Custom styles for links, lists, and other elements
-            '--tw-prose-links': isDarkMode ? '#60a5fa' : '#2563eb',
-            '--tw-prose-bold': isDarkMode ? '#ffffff' : '#111827',
-            '--tw-prose-headings': isDarkMode ? '#ffffff' : '#111827',
-            '--tw-prose-body': isDarkMode ? '#e5e7eb' : '#374151',
+            "--tw-prose-links": isDarkMode ? "#60a5fa" : "#2563eb",
+            "--tw-prose-bold": isDarkMode ? "#ffffff" : "#111827",
+            "--tw-prose-headings": isDarkMode ? "#ffffff" : "#111827",
+            "--tw-prose-body": isDarkMode ? "#e5e7eb" : "#374151",
           }}
           dangerouslySetInnerHTML={{ __html: safeHTML }}
         />
@@ -950,7 +969,8 @@ export default function Index() {
     const images: string[] = [];
     const slideshowImages: Array<{ url: string; title: string }> = [];
     const pageLinks: Array<{ title: string; url: string }> = [];
-    const inlineLinks: Array<{ text: string; url: string; fullMatch: string }> = [];
+    const inlineLinks: Array<{ text: string; url: string; fullMatch: string }> =
+      [];
 
     // Extract markdown page links [Title](URL) - but not images
     const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
@@ -972,11 +992,16 @@ export default function Index() {
       processedText.matchAll(markdownImageRegex),
     );
     markdownImages.forEach((match) => {
-      const title = match[1] || (typeof match[2] === 'string' ? match[2].split('/').pop()?.split('.')[0] : '') || 'Image';
+      const title =
+        match[1] ||
+        (typeof match[2] === "string"
+          ? match[2].split("/").pop()?.split(".")[0]
+          : "") ||
+        "Image";
       images.push(match[2]); // URL from markdown
       slideshowImages.push({
         url: match[2],
-        title: title
+        title: title,
       });
       processedText = processedText.replace(match[0], ""); // Remove markdown syntax
     });
@@ -986,11 +1011,13 @@ export default function Index() {
     images.push(...regularImageUrls);
 
     // Add regular URLs to slideshow as well
-    regularImageUrls.forEach(url => {
-      const title = (typeof url === 'string' ? url.split('/').pop()?.split('.')[0] : '') || 'Image';
+    regularImageUrls.forEach((url) => {
+      const title =
+        (typeof url === "string" ? url.split("/").pop()?.split(".")[0] : "") ||
+        "Image";
       slideshowImages.push({
         url: url,
-        title: title
+        title: title,
       });
     });
 
@@ -1062,7 +1089,12 @@ export default function Index() {
           const processedLine = part
             .split(/(\*\*[^*]+\*\*)/)
             .map((segment, segIndex) => {
-              if (segment && segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+              if (
+                segment &&
+                segment.startsWith &&
+                segment.startsWith("**") &&
+                segment.endsWith("**")
+              ) {
                 return (
                   <strong
                     key={segIndex}
@@ -1093,7 +1125,12 @@ export default function Index() {
             const processedLine = line
               .split(/(\*\*[^*]+\*\*)/)
               .map((segment, segIndex) => {
-                if (segment && segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+                if (
+                  segment &&
+                  segment.startsWith &&
+                  segment.startsWith("**") &&
+                  segment.endsWith("**")
+                ) {
                   return (
                     <strong
                       key={segIndex}
@@ -1132,7 +1169,12 @@ export default function Index() {
           const processedLine = listContent
             .split(/(\*\*[^*]+\*\*)/)
             .map((segment, segIndex) => {
-              if (segment && segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+              if (
+                segment &&
+                segment.startsWith &&
+                segment.startsWith("**") &&
+                segment.endsWith("**")
+              ) {
                 return (
                   <strong
                     key={segIndex}
@@ -1166,7 +1208,11 @@ export default function Index() {
             // Add safety check for undefined segments
             if (!segment) return "";
 
-            if (segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+            if (
+              segment.startsWith &&
+              segment.startsWith("**") &&
+              segment.endsWith("**")
+            ) {
               return (
                 <strong
                   key={segIndex}
@@ -1223,7 +1269,11 @@ export default function Index() {
   };
 
   // Page Links Component
-  const PageLinks = ({ links }: { links: Array<{ title: string; url: string }> }) => {
+  const PageLinks = ({
+    links,
+  }: {
+    links: Array<{ title: string; url: string }>;
+  }) => {
     if (links.length === 0) return null;
 
     return (
@@ -1571,15 +1621,18 @@ export default function Index() {
                             );
                           } else {
                             // Check if answer contains markdown links
-                            const hasMarkdownLinksinAnswer = hasMarkdownLinks(answer);
+                            const hasMarkdownLinksinAnswer =
+                              hasMarkdownLinks(answer);
 
                             if (hasMarkdownLinksinAnswer) {
                               // Parse and render markdown links
                               const parsedContent = parseMarkdownLinks(answer);
                               return (
-                                <div className={`prose-sm leading-relaxed max-w-full break-words ${
-                                  darkMode ? "text-gray-100" : "text-gray-900"
-                                }`}>
+                                <div
+                                  className={`prose-sm leading-relaxed max-w-full break-words ${
+                                    darkMode ? "text-gray-100" : "text-gray-900"
+                                  }`}
+                                >
                                   {parsedContent.map((part, index) => (
                                     <span key={index}>{part}</span>
                                   ))}
@@ -1587,12 +1640,19 @@ export default function Index() {
                               );
                             } else {
                               // Process as regular markdown/plain text
-                              const formatted = formatAnswerText(answer, darkMode);
+                              const formatted = formatAnswerText(
+                                answer,
+                                darkMode,
+                              );
                               return (
                                 <div>
-                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}>
+                                  <div
+                                    className={`prose-sm leading-relaxed max-w-full break-words ${
+                                      darkMode
+                                        ? "text-gray-100"
+                                        : "text-gray-900"
+                                    }`}
+                                  >
                                     {formatted.formattedText}
                                   </div>
                                   {/* Display slideshow for extracted images - always show if available */}
@@ -1602,8 +1662,10 @@ export default function Index() {
                                     typingMessageId === null) &&
                                     formatted.slideshowImages &&
                                     formatted.slideshowImages.length > 0 && (
-                                    <AutoImageSlideshow images={formatted.slideshowImages} />
-                                  )}
+                                      <AutoImageSlideshow
+                                        images={formatted.slideshowImages}
+                                      />
+                                    )}
                                 </div>
                               );
                             }
@@ -1634,13 +1696,21 @@ export default function Index() {
                           <div className="mt-4 max-h-40 overflow-y-auto scrollbar-hide">
                             <div className="space-y-2">
                               {message.response.file_links
-                                .filter(link => link && (typeof link === 'string' || (typeof link === 'object' && link.url)))
+                                .filter(
+                                  (link) =>
+                                    link &&
+                                    (typeof link === "string" ||
+                                      (typeof link === "object" && link.url)),
+                                )
                                 .map((link, index) => {
                                   // Handle both old format (string) and new format (object with title and url)
-                                  const href = typeof link === 'string' ? link : link.url;
-                                  const title = typeof link === 'string'
-                                    ? (link.split("/").pop() || `File ${index + 1}`)
-                                    : link.title;
+                                  const href =
+                                    typeof link === "string" ? link : link.url;
+                                  const title =
+                                    typeof link === "string"
+                                      ? link.split("/").pop() ||
+                                        `File ${index + 1}`
+                                      : link.title;
 
                                   return (
                                     <a
@@ -1654,11 +1724,13 @@ export default function Index() {
                                           : "bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                                       }`}
                                     >
-                                      <span className={`text-sm font-medium ${
-                                        darkMode
-                                          ? "text-gray-200 hover:text-blue-400"
-                                          : "text-gray-700 hover:text-blue-600"
-                                      }`}>
+                                      <span
+                                        className={`text-sm font-medium ${
+                                          darkMode
+                                            ? "text-gray-200 hover:text-blue-400"
+                                            : "text-gray-700 hover:text-blue-600"
+                                        }`}
+                                      >
                                         {title}
                                       </span>
                                     </a>
@@ -1688,20 +1760,20 @@ export default function Index() {
                       {(!message.response?.related_content ||
                         message.response.related_content.length === 0) &&
                         (!message.response?.file_links ||
-                        message.response.file_links.length === 0) &&
+                          message.response.file_links.length === 0) &&
                         (!message.response?.recommendations ||
-                        message.response.recommendations.length === 0) && (
-                        <div className="mt-4 flex items-center gap-2 opacity-70">
-                          <img
-                            src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                            alt="Hutech Solutions"
-                            className="h-6 w-auto"
-                          />
-                          <span className="text-xs text-gray-500">
-                            Powered by Hutech AI
-                          </span>
-                        </div>
-                      )}
+                          message.response.recommendations.length === 0) && (
+                          <div className="mt-4 flex items-center gap-2 opacity-70">
+                            <img
+                              src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                              alt="Hutech Solutions"
+                              className="h-6 w-auto"
+                            />
+                            <span className="text-xs text-gray-500">
+                              Powered by Hutech AI
+                            </span>
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
@@ -1785,7 +1857,9 @@ export default function Index() {
         />
 
         {/* Sticky Input Bar with integrated recommendations */}
-        <div className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}>
+        <div
+          className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}
+        >
           <div className="max-w-4xl mx-auto relative px-3 sm:px-4">
             {/* File Upload Inputs (Hidden) */}
             <input
@@ -1870,7 +1944,6 @@ export default function Index() {
                 </button>
               </div>
             )}
-
 
             <div
               className={`flex items-center gap-2 sm:gap-3 ${darkMode ? "bg-gray-700" : "bg-gray-100"} rounded-full p-2 sm:p-3 transition-all duration-300 ${isLoading ? "" : `${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"} hover:shadow-lg`} transform-gpu`}
@@ -1981,7 +2054,8 @@ export default function Index() {
                       : "hover:scale-110 active:scale-95 hover:shadow-lg"
                   } text-white disabled:opacity-50 disabled:hover:scale-100 shadow-md`}
                   style={{
-                    backgroundColor: isLoading || isRecording ? undefined : "#1192EE"
+                    backgroundColor:
+                      isLoading || isRecording ? undefined : "#1192EE",
                   }}
                 >
                   {isLoading ? (
@@ -2214,7 +2288,9 @@ export default function Index() {
       )}
 
       {/* Sticky Input Bar */}
-      <div className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}>
+      <div
+        className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}
+      >
         <div className="max-w-4xl mx-auto relative px-3 sm:px-4">
           {/* File Upload Inputs (Hidden) */}
           <input
@@ -2362,7 +2438,8 @@ export default function Index() {
                     : "hover:scale-110 active:scale-95 hover:shadow-lg"
                 } text-white disabled:opacity-50 disabled:hover:scale-100 shadow-md`}
                 style={{
-                  backgroundColor: isLoading || isRecording ? undefined : "#1192EE"
+                  backgroundColor:
+                    isLoading || isRecording ? undefined : "#1192EE",
                 }}
               >
                 {isLoading ? (
