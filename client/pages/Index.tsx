@@ -1624,35 +1624,14 @@ export default function Index() {
                           />
                         )}
 
-                      {/* 3. FILE LINKS SECTION - Show after typing is complete */}
+                      {/* 3. FILE LINKS SECTION - Small vertical cards */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.file_links &&
                         message.response.file_links.length > 0 && (
-                          <div className={`mt-4 p-4 rounded-lg border ${
-                            darkMode ? "bg-gray-800 border-gray-600" : "bg-gray-50 border-gray-200"
-                          }`}>
-                            <h6 className={`text-sm font-semibold mb-2 flex items-center gap-2 ${
-                              darkMode ? "text-gray-200" : "text-gray-700"
-                            }`}>
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14,2 14,8 20,8" />
-                                <line x1="16" y1="13" x2="8" y2="13" />
-                                <line x1="16" y1="17" x2="8" y2="17" />
-                                <polyline points="10,9 9,9 8,9" />
-                              </svg>
-                              file_links
-                            </h6>
+                          <div className="mt-4 max-h-40 overflow-y-auto scrollbar-hide">
                             <div className="space-y-2">
                               {message.response.file_links
                                 .filter(link => link && (typeof link === 'string' || (typeof link === 'object' && link.url)))
@@ -1662,9 +1641,6 @@ export default function Index() {
                                   const title = typeof link === 'string'
                                     ? (link.split("/").pop() || `File ${index + 1}`)
                                     : link.title;
-                                  const displayText = typeof link === 'string'
-                                    ? title
-                                    : `${title} - ${link.url}`;
 
                                   return (
                                     <a
@@ -1672,38 +1648,18 @@ export default function Index() {
                                       href={href}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className={`flex items-center gap-2 p-3 rounded border transition-all duration-200 group ${
+                                      className={`block p-3 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer ${
                                         darkMode
-                                          ? "bg-gray-700 border-gray-600 hover:border-gray-500 hover:bg-gray-600"
-                                          : "bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                          ? "bg-gray-800 border-gray-600 hover:border-gray-500 hover:bg-gray-700"
+                                          : "bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                                       }`}
                                     >
-                                      <svg
-                                        width="14"
-                                        height="14"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        className="text-blue-600 flex-shrink-0"
-                                      >
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                        <polyline points="7,10 12,15 17,10" />
-                                        <line x1="12" y1="15" x2="12" y2="3" />
-                                      </svg>
-                                      <span className={`text-sm flex-1 break-words ${
+                                      <span className={`text-sm font-medium ${
                                         darkMode
-                                          ? "text-gray-200 group-hover:text-blue-400"
-                                          : "text-gray-700 group-hover:text-blue-600"
+                                          ? "text-gray-200 hover:text-blue-400"
+                                          : "text-gray-700 hover:text-blue-600"
                                       }`}>
-                                        {displayText}
-                                      </span>
-                                      <span className={`text-xs flex-shrink-0 ${
-                                        darkMode
-                                          ? "text-gray-400 group-hover:text-blue-400"
-                                          : "text-gray-500 group-hover:text-blue-500"
-                                      }`}>
-                                        {typeof link === 'string' ? 'Download' : 'Open'}
+                                        {title}
                                       </span>
                                     </a>
                                   );
