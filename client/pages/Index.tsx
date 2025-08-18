@@ -1899,25 +1899,6 @@ export default function Index() {
               </div>
             )}
 
-            {/* Recommendations above search bar */}
-            {(recommendations.length > 0 || !isConversationMode) && (
-              <div className="mb-3">
-                <Recommendations
-                  recommendations={
-                    recommendations.length > 0
-                      ? recommendations
-                      : [
-                          "What services do we provide?",
-                          "Where are our offices?",
-                          "What is our tech stack?",
-                          "What certifications do we have?",
-                        ]
-                  }
-                  onSelect={handleQuestionSubmit}
-                  isDarkMode={darkMode}
-                />
-              </div>
-            )}
 
             <div
               className={`flex items-center gap-2 sm:gap-3 ${darkMode ? "bg-gray-700" : "bg-gray-100"} rounded-full p-2 sm:p-3 transition-all duration-300 ${isLoading ? "" : `${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"} hover:shadow-lg`} transform-gpu`}
