@@ -1676,11 +1676,6 @@ export default function Index() {
                         message.response?.recommendations &&
                         message.response.recommendations.length > 0 && (
                           <div className="mt-4">
-                            <h6 className={`text-sm font-semibold mb-3 ${
-                              darkMode ? "text-gray-200" : "text-gray-700"
-                            }`}>
-                              Related Questions
-                            </h6>
                             <Recommendations
                               recommendations={message.response.recommendations}
                               onSelect={handleQuestionSubmit}
