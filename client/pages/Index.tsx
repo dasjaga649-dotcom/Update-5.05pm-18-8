@@ -1902,25 +1902,20 @@ export default function Index() {
             {/* Recommendations above search bar */}
             {(recommendations.length > 0 || !isConversationMode) && (
               <div className="mb-3">
-                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-                  {(recommendations.length > 0
-                    ? recommendations
-                    : [
-                        "What services do we provide?",
-                        "Where are our offices?",
-                        "What is our tech stack?",
-                        "What certifications do we have?",
-                      ]
-                  ).map((rec, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleQuestionSubmit(rec)}
-                      className={`flex-shrink-0 px-2 py-1 ${darkMode ? "bg-blue-900/50 hover:bg-blue-800 text-blue-200 border-blue-700/50" : "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"} rounded-md text-xs transition-all duration-200 transform hover:scale-105 border shadow-sm hover:shadow-md backdrop-blur-sm whitespace-nowrap`}
-                    >
-                      {rec}
-                    </button>
-                  ))}
-                </div>
+                <Recommendations
+                  recommendations={
+                    recommendations.length > 0
+                      ? recommendations
+                      : [
+                          "What services do we provide?",
+                          "Where are our offices?",
+                          "What is our tech stack?",
+                          "What certifications do we have?",
+                        ]
+                  }
+                  onSelect={handleQuestionSubmit}
+                  isDarkMode={darkMode}
+                />
               </div>
             )}
 
