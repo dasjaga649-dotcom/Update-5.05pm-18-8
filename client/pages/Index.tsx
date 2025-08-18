@@ -1533,6 +1533,7 @@ export default function Index() {
                     <p className="text-sm">{message.content}</p>
                   ) : (
                     <div>
+                      {/* 1. ANSWER SECTION - Show typing animation or complete answer */}
                       <div className="max-w-full overflow-hidden">
                         {(() => {
                           // Show typing animation if this message is currently being typed
@@ -1558,25 +1559,8 @@ export default function Index() {
                           if (hasHTMLTags) {
                             // Render HTML content safely
                             return (
-                              <div>
-                                <div className="max-w-full break-words">
-                                  {renderHTMLContent(answer, darkMode)}
-                                </div>
-                                {/* Show Hutech logo when no images are present */}
-                                {(!message.response?.related_content ||
-                                  message.response.related_content.length ===
-                                    0) && (
-                                  <div className="mt-4 flex items-center gap-2 opacity-70">
-                                    <img
-                                      src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                                      alt="Hutech Solutions"
-                                      className="h-6 w-auto"
-                                    />
-                                    <span className="text-xs text-gray-500">
-                                      Powered by Hutech AI
-                                    </span>
-                                  </div>
-                                )}
+                              <div className="max-w-full break-words">
+                                {renderHTMLContent(answer, darkMode)}
                               </div>
                             );
                           } else {
@@ -1587,28 +1571,12 @@ export default function Index() {
                               // Parse and render markdown links
                               const parsedContent = parseMarkdownLinks(answer);
                               return (
-                                <div>
-                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}>
-                                    {parsedContent.map((part, index) => (
-                                      <span key={index}>{part}</span>
-                                    ))}
-                                  </div>
-                                  {/* Show Hutech logo when no images are present */}
-                                  {(!message.response?.related_content ||
-                                    message.response.related_content.length === 0) && (
-                                    <div className="mt-4 flex items-center gap-2 opacity-70">
-                                      <img
-                                        src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                                        alt="Hutech Solutions"
-                                        className="h-6 w-auto"
-                                      />
-                                      <span className="text-xs text-gray-500">
-                                        Powered by Hutech AI
-                                      </span>
-                                    </div>
-                                  )}
+                                <div className={`prose-sm leading-relaxed max-w-full break-words ${
+                                  darkMode ? "text-gray-100" : "text-gray-900"
+                                }`}>
+                                  {parsedContent.map((part, index) => (
+                                    <span key={index}>{part}</span>
+                                  ))}
                                 </div>
                               );
                             } else {
@@ -1616,28 +1584,14 @@ export default function Index() {
                               const formatted = formatAnswerText(answer, darkMode);
                               return (
                                 <div>
-                                  <div className="prose-sm text-gray-900 leading-relaxed max-w-full break-words">
+                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
+                                    darkMode ? "text-gray-100" : "text-gray-900"
+                                  }`}>
                                     {formatted.formattedText}
                                   </div>
                                   {/* Display slideshow for extracted images */}
                                   {formatted.slideshowImages && formatted.slideshowImages.length > 0 && (
                                     <AutoImageSlideshow images={formatted.slideshowImages} />
-                                  )}
-                                  {/* Page links are now handled inline in the text, no separate section needed */}
-                                  {/* Show Hutech logo when no images are present */}
-                                  {(!message.response?.related_content ||
-                                    message.response.related_content.length ===
-                                      0) && (
-                                    <div className="mt-4 flex items-center gap-2 opacity-70">
-                                      <img
-                                        src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                                        alt="Hutech Solutions"
-                                        className="h-6 w-auto"
-                                      />
-                                      <span className="text-xs text-gray-500">
-                                        Powered by Hutech AI
-                                      </span>
-                                    </div>
                                   )}
                                 </div>
                               );
@@ -1646,7 +1600,7 @@ export default function Index() {
                         })()}
                       </div>
 
-                      {/* Show related content only after typing is complete - using horizontal scrollable cards */}
+                      {/* 2. RELATED CONTENT SECTION - Show after typing is complete */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
@@ -1659,15 +1613,19 @@ export default function Index() {
                           />
                         )}
 
-                      {/* File download links when file_links are present */}
+                      {/* 3. FILE LINKS SECTION - Show after typing is complete */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.file_links &&
                         message.response.file_links.length > 0 && (
-                          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <h6 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                          <div className={`mt-4 p-4 rounded-lg border ${
+                            darkMode ? "bg-gray-800 border-gray-600" : "bg-gray-50 border-gray-200"
+                          }`}>
+                            <h6 className={`text-sm font-semibold mb-2 flex items-center gap-2 ${
+                              darkMode ? "text-gray-200" : "text-gray-700"
+                            }`}>
                               <svg
                                 width="16"
                                 height="16"
@@ -1682,7 +1640,7 @@ export default function Index() {
                                 <line x1="16" y1="17" x2="8" y2="17" />
                                 <polyline points="10,9 9,9 8,9" />
                               </svg>
-                              Available Files
+                              file_links
                             </h6>
                             <div className="space-y-2">
                               {message.response.file_links
