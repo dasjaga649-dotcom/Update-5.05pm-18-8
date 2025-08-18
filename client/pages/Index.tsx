@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { StackedImageCarousel } from "../components/StackedImageCarousel";
+import { HorizontalScrollableCards } from "../components/HorizontalScrollableCards";
 import { AutoImageSlideshow } from "../components/AutoImageSlideshow";
 
 // Type definitions for the backend response
