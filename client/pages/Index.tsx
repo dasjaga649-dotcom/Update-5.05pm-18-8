@@ -907,13 +907,17 @@ export default function Index() {
 
     if (hasHTMLTags) {
       // If content has HTML, sanitize and render safely
-      // Basic sanitization - only allow safe tags
+      // Enhanced sanitization - only allow safe tags
       let safeHTML = content
         .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
         .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframe tags
         .replace(/javascript:/gi, '') // Remove javascript: URLs
         .replace(/on\w+="[^"]*"/gi, '') // Remove event handlers
-        .replace(/on\w+='[^']*'/gi, ''); // Remove event handlers
+        .replace(/on\w+='[^']*'/gi, '') // Remove event handlers
+        // Enhance image tags with proper styling
+        .replace(/<img([^>]*?)>/gi, '<img$1 style="max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;">')
+        // Add proper target and rel attributes to links
+        .replace(/<a([^>]*?)href="([^"]*)"([^>]*?)>/gi, '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">')
 
       // Clean up link text in HTML content
       safeHTML = safeHTML.replace(/<a([^>]*)>([^<]+)<\/a>/gi, (match, attributes, linkText) => {
