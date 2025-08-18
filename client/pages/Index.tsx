@@ -1700,6 +1700,46 @@ export default function Index() {
                             </div>
                           </div>
                         )}
+
+                      {/* 4. RECOMMENDATIONS SECTION - Show after typing is complete */}
+                      {(showImages[message.id] ||
+                        (typingMessageId !== message.id &&
+                          typingMessageId !== null) ||
+                        typingMessageId === null) &&
+                        message.response?.recommendations &&
+                        message.response.recommendations.length > 0 && (
+                          <div className="mt-4">
+                            <h6 className={`text-sm font-semibold mb-3 ${
+                              darkMode ? "text-gray-200" : "text-gray-700"
+                            }`}>
+                              Related Questions
+                            </h6>
+                            <Recommendations
+                              recommendations={message.response.recommendations}
+                              onSelect={handleQuestionSubmit}
+                              isDarkMode={darkMode}
+                            />
+                          </div>
+                        )}
+
+                      {/* Show Hutech logo when no content is present */}
+                      {(!message.response?.related_content ||
+                        message.response.related_content.length === 0) &&
+                        (!message.response?.file_links ||
+                        message.response.file_links.length === 0) &&
+                        (!message.response?.recommendations ||
+                        message.response.recommendations.length === 0) && (
+                        <div className="mt-4 flex items-center gap-2 opacity-70">
+                          <img
+                            src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                            alt="Hutech Solutions"
+                            className="h-6 w-auto"
+                          />
+                          <span className="text-xs text-gray-500">
+                            Powered by Hutech AI
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
