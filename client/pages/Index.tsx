@@ -1661,7 +1661,11 @@ export default function Index() {
                                       href={href}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="flex items-center gap-2 p-3 bg-white rounded border hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group"
+                                      className={`flex items-center gap-2 p-3 rounded border transition-all duration-200 group ${
+                                        darkMode
+                                          ? "bg-gray-700 border-gray-600 hover:border-gray-500 hover:bg-gray-600"
+                                          : "bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                      }`}
                                     >
                                       <svg
                                         width="14"
