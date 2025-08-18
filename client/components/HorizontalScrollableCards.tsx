@@ -59,10 +59,13 @@ export const HorizontalScrollableCards = ({
         {showLeftArrow && (
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-2 transition-all duration-200 transform hover:scale-110 border border-gray-200"
-            style={{ backdropFilter: "blur(8px)" }}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-all duration-200 transform hover:scale-110 shadow-lg hover:shadow-xl"
+            style={{
+              backgroundColor: "#176CAE",
+              backdropFilter: "blur(8px)"
+            }}
           >
-            <ChevronLeft size={20} className="text-gray-700" />
+            <ChevronLeft size={20} className="text-white" />
           </button>
         )}
 
@@ -70,10 +73,13 @@ export const HorizontalScrollableCards = ({
         {showRightArrow && (
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-2 transition-all duration-200 transform hover:scale-110 border border-gray-200"
-            style={{ backdropFilter: "blur(8px)" }}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-all duration-200 transform hover:scale-110 shadow-lg hover:shadow-xl"
+            style={{
+              backgroundColor: "#176CAE",
+              backdropFilter: "blur(8px)"
+            }}
           >
-            <ChevronRight size={20} className="text-gray-700" />
+            <ChevronRight size={20} className="text-white" />
           </button>
         )}
 
