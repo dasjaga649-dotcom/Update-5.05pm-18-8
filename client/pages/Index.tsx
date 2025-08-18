@@ -1890,7 +1890,7 @@ export default function Index() {
             )}
 
             <div
-              className={`flex items-center gap-2 sm:gap-3 ${darkMode ? "bg-gray-700" : "bg-gray-100"} rounded-full p-2 sm:p-3 transition-all duration-500 ${isLoading ? "bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-blue-300 shadow-2xl scale-105 animate-pulse" : `${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"} hover:shadow-lg`} transform-gpu`}
+              className={`flex items-center gap-2 sm:gap-3 ${darkMode ? "bg-gray-700" : "bg-gray-100"} rounded-full p-2 sm:p-3 transition-all duration-300 ${isLoading ? "" : `${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"} hover:shadow-lg`} transform-gpu`}
             >
               {/* Left side - Voice only */}
               <div className="flex items-center gap-1 sm:gap-2">
