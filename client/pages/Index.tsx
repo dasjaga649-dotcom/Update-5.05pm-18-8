@@ -1611,14 +1611,14 @@ export default function Index() {
                         })()}
                       </div>
 
-                      {/* Show related content only after typing is complete - using new stacked carousel */}
+                      {/* Show related content only after typing is complete - using horizontal scrollable cards */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.related_content &&
                         message.response.related_content.length > 0 && (
-                          <StackedImageCarousel
+                          <HorizontalScrollableCards
                             content={message.response.related_content}
                             isDarkMode={darkMode}
                           />
