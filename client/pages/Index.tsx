@@ -1589,8 +1589,13 @@ export default function Index() {
                                   }`}>
                                     {formatted.formattedText}
                                   </div>
-                                  {/* Display slideshow for extracted images */}
-                                  {formatted.slideshowImages && formatted.slideshowImages.length > 0 && (
+                                  {/* Display slideshow for extracted images - always show if available */}
+                                  {(showImages[message.id] ||
+                                    (typingMessageId !== message.id &&
+                                      typingMessageId !== null) ||
+                                    typingMessageId === null) &&
+                                    formatted.slideshowImages &&
+                                    formatted.slideshowImages.length > 0 && (
                                     <AutoImageSlideshow images={formatted.slideshowImages} />
                                   )}
                                 </div>
