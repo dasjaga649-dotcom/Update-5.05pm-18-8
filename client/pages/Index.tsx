@@ -1680,10 +1680,18 @@ export default function Index() {
                                         <polyline points="7,10 12,15 17,10" />
                                         <line x1="12" y1="15" x2="12" y2="3" />
                                       </svg>
-                                      <span className="text-sm text-gray-700 group-hover:text-blue-600 flex-1 break-words">
+                                      <span className={`text-sm flex-1 break-words ${
+                                        darkMode
+                                          ? "text-gray-200 group-hover:text-blue-400"
+                                          : "text-gray-700 group-hover:text-blue-600"
+                                      }`}>
                                         {displayText}
                                       </span>
-                                      <span className="text-xs text-gray-500 group-hover:text-blue-500 flex-shrink-0">
+                                      <span className={`text-xs flex-shrink-0 ${
+                                        darkMode
+                                          ? "text-gray-400 group-hover:text-blue-400"
+                                          : "text-gray-500 group-hover:text-blue-500"
+                                      }`}>
                                         {typeof link === 'string' ? 'Download' : 'Open'}
                                       </span>
                                     </a>
