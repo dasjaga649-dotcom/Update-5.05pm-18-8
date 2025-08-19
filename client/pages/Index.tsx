@@ -345,7 +345,7 @@ export default function Index() {
 
     return lines.map((line, lineIndex) => {
       // Split each line by ** markers for bold formatting
-      const parts = line.split(/(\*\*[^*]*\*\*)/g);
+      const parts = line.split(/(\*\*.*?\*\*)/g);
 
       const formattedLine = parts.map((part, index) => {
         if (part.startsWith("**") && part.endsWith("**")) {
