@@ -1163,13 +1163,38 @@ export default function Index() {
         }
       });
     } else {
-      // No HTML lists, process as before
-      const lines = processedText.split(/\\n|\n/).filter((line) => line.trim());
+      // First, split text by * ** pattern to create bullet points
+      const bulletSplitText = processedText.replace(/\s*\*\s*\*\*/g, '\n* **');
+      const lines = bulletSplitText.split(/\\n|\n/).filter((line) => line.trim());
 
       lines.forEach((line, index) => {
         // Handle special bullet points: * **text**
-        if (line.trim().match(/^\*\s*\*\*.*\*\*$/)) {
-          const boldContent = line.trim().replace(/^\*\s*\*\*(.*?)\*\*$/, '$1');
+        if (line.trim().match(/^\*\s*\*\*/)) {
+          // Extract everything after * ** including the bold part and any text after
+          const content = line.trim().replace(/^\*\s*\*\*/, '');
+
+          // Process the content to handle bold formatting
+          const processedContent = content
+            .split(/(\*\*[^*]*\*\*)/)
+            .map((segment, segIndex) => {
+              if (
+                segment &&
+                segment.startsWith &&
+                segment.startsWith("**") &&
+                segment.endsWith("**")
+              ) {
+                return (
+                  <strong
+                    key={segIndex}
+                    className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}
+                  >
+                    {segment.slice(2, -2)}
+                  </strong>
+                );
+              }
+              return segment || "";
+            });
+
           formattedContent.push(
             <div
               key={index}
@@ -1177,9 +1202,7 @@ export default function Index() {
             >
               <span className="text-blue-600 mr-2 mt-1 flex-shrink-0">•</span>
               <span className="break-words overflow-wrap-anywhere">
-                <strong className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
-                  {boldContent}
-                </strong>
+                {processedContent}
               </span>
             </div>,
           );
