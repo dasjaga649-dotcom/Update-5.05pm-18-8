@@ -1159,7 +1159,26 @@ export default function Index() {
       const lines = processedText.split(/\\n|\n/).filter((line) => line.trim());
 
       lines.forEach((line, index) => {
-        // Handle list items
+        // Handle special bullet points: * **text**
+        if (line.trim().match(/^\*\s*\*\*.*\*\*$/)) {
+          const boldContent = line.trim().replace(/^\*\s*\*\*(.*?)\*\*$/, '$1');
+          formattedContent.push(
+            <div
+              key={index}
+              className={`mb-2 ${darkMode ? "text-gray-100" : "text-gray-700"} ml-4 flex items-start break-words`}
+            >
+              <span className="text-blue-600 mr-2 mt-1 flex-shrink-0">•</span>
+              <span className="break-words overflow-wrap-anywhere">
+                <strong className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
+                  {boldContent}
+                </strong>
+              </span>
+            </div>,
+          );
+          return;
+        }
+
+        // Handle regular list items
         if (
           line.trim().startsWith("•") ||
           line.trim().startsWith("-") ||
