@@ -933,7 +933,15 @@ export default function Index() {
         .replace(
           /<a([^>]*?)href="([^"]*)"([^>]*?)>/gi,
           '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">',
-        );
+        )
+        // Enhance headings with proper spacing
+        .replace(/<h([1-6])([^>]*?)>/gi, '<h$1$2 style="margin: 16px 0 8px 0; font-weight: bold;">')
+        // Enhance paragraphs with proper spacing
+        .replace(/<p([^>]*?)>/gi, '<p$1 style="margin: 8px 0; line-height: 1.6;">')
+        // Enhance lists with proper spacing
+        .replace(/<ul([^>]*?)>/gi, '<ul$1 style="margin: 8px 0; padding-left: 20px;">')
+        .replace(/<ol([^>]*?)>/gi, '<ol$1 style="margin: 8px 0; padding-left: 20px;">')
+        .replace(/<li([^>]*?)>/gi, '<li$1 style="margin: 4px 0;">');
 
       // Clean up link text in HTML content
       safeHTML = safeHTML.replace(
