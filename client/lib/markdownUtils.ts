@@ -54,3 +54,10 @@ export const hasMarkdownLinks = (text: string): boolean => {
   const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   return markdownLinkRegex.test(text);
 };
+
+/**
+ * Check if text contains bullet points with bold text
+ */
+export const hasBulletPoints = (text: string): boolean => {
+  return /\*\s*\*\*/.test(text);
+};
