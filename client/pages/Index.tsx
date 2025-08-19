@@ -581,7 +581,7 @@ export default function Index() {
 
             <div class="page-footer">
               <p>
-                Powered by Hutech Solutions AI Assistant •
+                Powered by Hutech Solutions AI Assistant ���
                 CMMI Level 3 Certified •
                 Generated: ${currentDate.toISOString()}
               </p>
@@ -1253,7 +1253,7 @@ export default function Index() {
 
         // Handle bold text and inline links
         const processedLine = line
-          .split(/(\*\*[^*]+\*\*|\[([^\]]+)\]\(([^)]+)\))/)
+          .split(/(\*\*.*?\*\*|\[([^\]]+)\]\(([^)]+)\))/)
           .map((segment, segIndex) => {
             // Add safety check for undefined segments
             if (!segment) return "";
