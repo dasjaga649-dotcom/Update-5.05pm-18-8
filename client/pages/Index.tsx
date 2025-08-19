@@ -1175,7 +1175,7 @@ export default function Index() {
 
           // Process the content to handle bold formatting
           const processedContent = content
-            .split(/(\*\*[^*]*\*\*)/)
+            .split(/(\*\*.*?\*\*)/)
             .map((segment, segIndex) => {
               if (
                 segment &&
@@ -1215,9 +1215,9 @@ export default function Index() {
           line.trim().startsWith("-") ||
           line.trim().match(/^\d+\./)
         ) {
-          const listContent = line.replace(/^[•\-\d\.]\s*/, "");
+          const listContent = line.replace(/^[��\-\d\.]\s*/, "");
           const processedLine = listContent
-            .split(/(\*\*[^*]+\*\*)/)
+            .split(/(\*\*.*?\*\*)/)
             .map((segment, segIndex) => {
               if (
                 segment &&
