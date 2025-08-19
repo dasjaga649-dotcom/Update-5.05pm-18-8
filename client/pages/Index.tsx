@@ -1670,11 +1670,33 @@ export default function Index() {
                               </div>
                             );
                           } else {
-                            // Check if answer contains markdown links
+                            // Check if answer contains bullet points first
+                            const hasBulletPointsInAnswer = hasBulletPoints(answer);
                             const hasMarkdownLinksinAnswer =
                               hasMarkdownLinks(answer);
 
-                            if (hasMarkdownLinksinAnswer) {
+                            if (hasBulletPointsInAnswer) {
+                              // Process as text with bullet points
+                              const formatted = formatAnswerText(answer, darkMode);
+                              return (
+                                <div>
+                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
+                                    darkMode ? "text-gray-100" : "text-gray-900"
+                                  }`}>
+                                    {formatted.formattedText}
+                                  </div>
+                                  {/* Display slideshow for extracted images - always show if available */}
+                                  {(showImages[message.id] ||
+                                    (typingMessageId !== message.id &&
+                                      typingMessageId !== null) ||
+                                    typingMessageId === null) &&
+                                    formatted.slideshowImages &&
+                                    formatted.slideshowImages.length > 0 && (
+                                    <AutoImageSlideshow images={formatted.slideshowImages} />
+                                  )}
+                                </div>
+                              );
+                            } else if (hasMarkdownLinksinAnswer) {
                               // Parse and render markdown links
                               const parsedContent = parseMarkdownLinks(answer);
                               return (
