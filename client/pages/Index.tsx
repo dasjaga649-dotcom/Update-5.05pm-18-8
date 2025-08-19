@@ -15,7 +15,14 @@ import {
   Sparkles,
 } from "lucide-react";
 import { StackedImageCarousel } from "../components/StackedImageCarousel";
+import { HorizontalScrollableCards } from "../components/HorizontalScrollableCards";
 import { AutoImageSlideshow } from "../components/AutoImageSlideshow";
+import { Recommendations } from "../components/Recommendations";
+import {
+  parseMarkdownLinks,
+  hasMarkdownLinks,
+  hasBulletPoints,
+} from "../lib/markdownUtils";
 
 // Type definitions for the backend response
 interface RelatedContent {
@@ -55,7 +62,7 @@ const predefinedQuestions = [
   {
     category: "Offices",
     question: "Where are our offices?",
-    icon: "🏢",
+    icon: "����",
   },
   {
     category: "Services",
@@ -146,7 +153,8 @@ export default function Index() {
           if (chatContainerRef.current) {
             const container = chatContainerRef.current;
             const bottomOffset = 200; // Account for recommendations and input area
-            container.scrollTop = container.scrollHeight - container.clientHeight + bottomOffset;
+            container.scrollTop =
+              container.scrollHeight - container.clientHeight + bottomOffset;
           }
         });
       };
@@ -163,7 +171,8 @@ export default function Index() {
           const container = chatContainerRef.current;
           if (container) {
             const bottomOffset = 180; // Account for recommendations and input area
-            container.scrollTop = container.scrollHeight - container.clientHeight + bottomOffset;
+            container.scrollTop =
+              container.scrollHeight - container.clientHeight + bottomOffset;
           }
         });
       };
@@ -310,13 +319,13 @@ export default function Index() {
     // Split text into words while preserving formatting
     const words = text.split(/\s+/);
     let currentWordIndex = 0;
-    let displayText = '';
+    let displayText = "";
 
     const typeInterval = setInterval(() => {
       if (currentWordIndex < words.length) {
         // Add the current word
         if (currentWordIndex > 0) {
-          displayText += ' ';
+          displayText += " ";
         }
         displayText += words[currentWordIndex];
 
@@ -340,10 +349,10 @@ export default function Index() {
 
     return lines.map((line, lineIndex) => {
       // Split each line by ** markers for bold formatting
-      const parts = line.split(/(\*\*[^*]*\*\*)/g);
+      const parts = line.split(/(\*\*.*?\*\*)/g);
 
       const formattedLine = parts.map((part, index) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
+        if (part.startsWith("**") && part.endsWith("**")) {
           // Bold text
           const content = part.slice(2, -2);
           return (
@@ -576,7 +585,7 @@ export default function Index() {
 
             <div class="page-footer">
               <p>
-                Powered by Hutech Solutions AI Assistant •
+                Powered by Hutech Solutions AI Assistant ���
                 CMMI Level 3 Certified •
                 Generated: ${currentDate.toISOString()}
               </p>
@@ -867,26 +876,34 @@ export default function Index() {
   const cleanLinkText = (text: string): string => {
     // Remove parenthetical text and extra information
     let cleaned = text
-      .replace(/\s*\([^)]*\)\s*$/g, '') // Remove anything in parentheses at the end
-      .replace(/\|\s*Hutech\s*Solutions.*$/i, '') // Remove "| Hutech Solutions" and everything after
-      .replace(/Brochures\s*\|\s*Hutech\s*Solutions/gi, 'Brochures - Hutech Solutions') // Clean up title format
-      .replace(/\s*\|\s*/g, ' - ') // Replace pipes with dashes
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-      .replace(/\s*Brochure$/, ' Brochure') // Ensure "Brochure" is properly spaced
+      .replace(/\s*\([^)]*\)\s*$/g, "") // Remove anything in parentheses at the end
+      .replace(/\|\s*Hutech\s*Solutions.*$/i, "") // Remove "| Hutech Solutions" and everything after
+      .replace(
+        /Brochures\s*\|\s*Hutech\s*Solutions/gi,
+        "Brochures - Hutech Solutions",
+      ) // Clean up title format
+      .replace(/\s*\|\s*/g, " - ") // Replace pipes with dashes
+      .replace(/\s+/g, " ") // Replace multiple spaces with single space
+      .replace(/\s*Brochure$/, " Brochure") // Ensure "Brochure" is properly spaced
       .trim();
 
     // If the text is still too long or repetitive, use a simpler version
-    if (cleaned.length > 60 || cleaned.includes('Hutech SolutionsHutech Solutions')) {
-      if (cleaned.toLowerCase().includes('brochure')) {
+    if (
+      cleaned.length > 60 ||
+      cleaned.includes("Hutech SolutionsHutech Solutions")
+    ) {
+      if (cleaned.toLowerCase().includes("brochure")) {
         // Extract just the brochure name without company suffix
-        const brochureName = cleaned.replace(/\s*-\s*Hutech\s*Solutions.*$/i, '').trim();
+        const brochureName = cleaned
+          .replace(/\s*-\s*Hutech\s*Solutions.*$/i, "")
+          .trim();
         if (brochureName.length > 0) {
           cleaned = brochureName;
         } else {
-          cleaned = 'Brochures - Hutech Solutions';
+          cleaned = "Brochures - Hutech Solutions";
         }
-      } else if (cleaned.toLowerCase().includes('service')) {
-        cleaned = 'Services - Hutech Solutions';
+      } else if (cleaned.toLowerCase().includes("service")) {
+        cleaned = "Services - Hutech Solutions";
       } else {
         // Extract the first meaningful part
         const parts = cleaned.split(/[\-\|]/);
@@ -904,27 +921,62 @@ export default function Index() {
 
     if (hasHTMLTags) {
       // If content has HTML, sanitize and render safely
-      // Basic sanitization - only allow safe tags
+      // Enhanced sanitization - only allow safe tags
       let safeHTML = content
-        .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
-        .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframe tags
-        .replace(/javascript:/gi, '') // Remove javascript: URLs
-        .replace(/on\w+="[^"]*"/gi, '') // Remove event handlers
-        .replace(/on\w+='[^']*'/gi, ''); // Remove event handlers
+        .replace(/<script[^>]*>.*?<\/script>/gi, "") // Remove script tags
+        .replace(/<iframe[^>]*>.*?<\/iframe>/gi, "") // Remove iframe tags
+        .replace(/javascript:/gi, "") // Remove javascript: URLs
+        .replace(/on\w+="[^"]*"/gi, "") // Remove event handlers
+        .replace(/on\w+='[^']*'/gi, "") // Remove event handlers
+        // Enhance image tags with proper styling
+        .replace(
+          /<img([^>]*?)>/gi,
+          '<img$1 style="max-width: 100%; height: auto; border-radius: 8px; margin: 8px 0;">',
+        )
+        // Add proper target and rel attributes to links
+        .replace(
+          /<a([^>]*?)href="([^"]*)"([^>]*?)>/gi,
+          '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">',
+        )
+        // Enhance headings with proper spacing
+        .replace(
+          /<h([1-6])([^>]*?)>/gi,
+          '<h$1$2 style="margin: 16px 0 8px 0; font-weight: bold;">',
+        )
+        // Enhance paragraphs with proper spacing
+        .replace(
+          /<p([^>]*?)>/gi,
+          '<p$1 style="margin: 8px 0; line-height: 1.6;">',
+        )
+        // Enhance lists with proper spacing
+        .replace(
+          /<ul([^>]*?)>/gi,
+          '<ul$1 style="margin: 8px 0; padding-left: 20px;">',
+        )
+        .replace(
+          /<ol([^>]*?)>/gi,
+          '<ol$1 style="margin: 8px 0; padding-left: 20px;">',
+        )
+        .replace(/<li([^>]*?)>/gi, '<li$1 style="margin: 4px 0;">');
 
       // Clean up link text in HTML content
-      safeHTML = safeHTML.replace(/<a([^>]*)>([^<]+)<\/a>/gi, (match, attributes, linkText) => {
-        const cleanedText = cleanLinkText(linkText);
-        return `<a${attributes}>${cleanedText}</a>`;
-      });
+      safeHTML = safeHTML.replace(
+        /<a([^>]*)>([^<]+)<\/a>/gi,
+        (match, attributes, linkText) => {
+          const cleanedText = cleanLinkText(linkText);
+          return `<a${attributes}>${cleanedText}</a>`;
+        },
+      );
 
       return (
         <div
-          className={`prose prose-sm max-w-none ${isDarkMode ? 'prose-invert' : ''}`}
+          className={`prose prose-sm max-w-none ${isDarkMode ? "prose-invert" : ""}`}
           style={{
-            // Custom styles for links and lists
-            '--tw-prose-links': isDarkMode ? '#60a5fa' : '#2563eb',
-            '--tw-prose-bold': isDarkMode ? '#ffffff' : '#111827',
+            // Custom styles for links, lists, and other elements
+            "--tw-prose-links": isDarkMode ? "#60a5fa" : "#2563eb",
+            "--tw-prose-bold": isDarkMode ? "#ffffff" : "#111827",
+            "--tw-prose-headings": isDarkMode ? "#ffffff" : "#111827",
+            "--tw-prose-body": isDarkMode ? "#e5e7eb" : "#374151",
           }}
           dangerouslySetInnerHTML={{ __html: safeHTML }}
         />
@@ -941,7 +993,8 @@ export default function Index() {
     const images: string[] = [];
     const slideshowImages: Array<{ url: string; title: string }> = [];
     const pageLinks: Array<{ title: string; url: string }> = [];
-    const inlineLinks: Array<{ text: string; url: string; fullMatch: string }> = [];
+    const inlineLinks: Array<{ text: string; url: string; fullMatch: string }> =
+      [];
 
     // Extract markdown page links [Title](URL) - but not images
     const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
@@ -963,11 +1016,16 @@ export default function Index() {
       processedText.matchAll(markdownImageRegex),
     );
     markdownImages.forEach((match) => {
-      const title = match[1] || (typeof match[2] === 'string' ? match[2].split('/').pop()?.split('.')[0] : '') || 'Image';
+      const title =
+        match[1] ||
+        (typeof match[2] === "string"
+          ? match[2].split("/").pop()?.split(".")[0]
+          : "") ||
+        "Image";
       images.push(match[2]); // URL from markdown
       slideshowImages.push({
         url: match[2],
-        title: title
+        title: title,
       });
       processedText = processedText.replace(match[0], ""); // Remove markdown syntax
     });
@@ -977,11 +1035,13 @@ export default function Index() {
     images.push(...regularImageUrls);
 
     // Add regular URLs to slideshow as well
-    regularImageUrls.forEach(url => {
-      const title = (typeof url === 'string' ? url.split('/').pop()?.split('.')[0] : '') || 'Image';
+    regularImageUrls.forEach((url) => {
+      const title =
+        (typeof url === "string" ? url.split("/").pop()?.split(".")[0] : "") ||
+        "Image";
       slideshowImages.push({
         url: url,
-        title: title
+        title: title,
       });
     });
 
@@ -1053,7 +1113,12 @@ export default function Index() {
           const processedLine = part
             .split(/(\*\*[^*]+\*\*)/)
             .map((segment, segIndex) => {
-              if (segment && segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+              if (
+                segment &&
+                segment.startsWith &&
+                segment.startsWith("**") &&
+                segment.endsWith("**")
+              ) {
                 return (
                   <strong
                     key={segIndex}
@@ -1084,7 +1149,12 @@ export default function Index() {
             const processedLine = line
               .split(/(\*\*[^*]+\*\*)/)
               .map((segment, segIndex) => {
-                if (segment && segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+                if (
+                  segment &&
+                  segment.startsWith &&
+                  segment.startsWith("**") &&
+                  segment.endsWith("**")
+                ) {
                   return (
                     <strong
                       key={segIndex}
@@ -1109,21 +1179,70 @@ export default function Index() {
         }
       });
     } else {
-      // No HTML lists, process as before
-      const lines = processedText.split(/\\n|\n/).filter((line) => line.trim());
+      // First, split text by * ** pattern to create bullet points
+      const bulletSplitText = processedText.replace(/\s*\*\s*\*\*/g, "\n* **");
+      const lines = bulletSplitText
+        .split(/\\n|\n/)
+        .filter((line) => line.trim());
 
       lines.forEach((line, index) => {
-        // Handle list items
+        // Handle special bullet points: * **text**
+        if (line.trim().match(/^\*\s*\*\*/)) {
+          // Extract everything after * ** including the bold part and any text after
+          const content = line.trim().replace(/^\*\s*\*\*/, "");
+
+          // Process the content to handle bold formatting
+          const processedContent = content
+            .split(/(\*\*.*?\*\*)/)
+            .map((segment, segIndex) => {
+              if (
+                segment &&
+                segment.startsWith &&
+                segment.startsWith("**") &&
+                segment.endsWith("**")
+              ) {
+                return (
+                  <strong
+                    key={segIndex}
+                    className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}
+                  >
+                    {segment.slice(2, -2)}
+                  </strong>
+                );
+              }
+              return segment || "";
+            });
+
+          formattedContent.push(
+            <div
+              key={index}
+              className={`mb-2 ${darkMode ? "text-gray-100" : "text-gray-700"} ml-4 flex items-start break-words`}
+            >
+              <span className="text-blue-600 mr-2 mt-1 flex-shrink-0">•</span>
+              <span className="break-words overflow-wrap-anywhere">
+                {processedContent}
+              </span>
+            </div>,
+          );
+          return;
+        }
+
+        // Handle regular list items
         if (
           line.trim().startsWith("•") ||
           line.trim().startsWith("-") ||
           line.trim().match(/^\d+\./)
         ) {
-          const listContent = line.replace(/^[•\-\d\.]\s*/, "");
+          const listContent = line.replace(/^[��\-\d\.]\s*/, "");
           const processedLine = listContent
-            .split(/(\*\*[^*]+\*\*)/)
+            .split(/(\*\*.*?\*\*)/)
             .map((segment, segIndex) => {
-              if (segment && segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+              if (
+                segment &&
+                segment.startsWith &&
+                segment.startsWith("**") &&
+                segment.endsWith("**")
+              ) {
                 return (
                   <strong
                     key={segIndex}
@@ -1152,12 +1271,16 @@ export default function Index() {
 
         // Handle bold text and inline links
         const processedLine = line
-          .split(/(\*\*[^*]+\*\*|\[([^\]]+)\]\(([^)]+)\))/)
+          .split(/(\*\*.*?\*\*|\[([^\]]+)\]\(([^)]+)\))/)
           .map((segment, segIndex) => {
             // Add safety check for undefined segments
             if (!segment) return "";
 
-            if (segment.startsWith && segment.startsWith("**") && segment.endsWith("**")) {
+            if (
+              segment.startsWith &&
+              segment.startsWith("**") &&
+              segment.endsWith("**")
+            ) {
               return (
                 <strong
                   key={segIndex}
@@ -1214,7 +1337,11 @@ export default function Index() {
   };
 
   // Page Links Component
-  const PageLinks = ({ links }: { links: Array<{ title: string; url: string }> }) => {
+  const PageLinks = ({
+    links,
+  }: {
+    links: Array<{ title: string; url: string }>;
+  }) => {
     if (links.length === 0) return null;
 
     return (
@@ -1524,12 +1651,13 @@ export default function Index() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div
-                  className={`${message.type === "user" ? "max-w-xs ml-auto" : "max-w-full mr-auto"} ${message.type === "user" ? "bg-gray-200 text-gray-800 rounded-2xl rounded-br-md p-4" : "bg-transparent text-gray-900 p-2"}`}
+                  className={`${message.type === "user" ? "max-w-xs ml-auto" : "max-w-2xl mr-auto"} ${message.type === "user" ? "bg-gray-200 text-gray-800 rounded-2xl rounded-br-md p-4" : "bg-transparent text-gray-900 p-2"}`}
                 >
                   {message.type === "user" ? (
                     <p className="text-sm">{message.content}</p>
                   ) : (
                     <div>
+                      {/* 1. ANSWER SECTION - Show typing animation or complete answer */}
                       <div className="max-w-full overflow-hidden">
                         {(() => {
                           // Show typing animation if this message is currently being typed
@@ -1555,111 +1683,134 @@ export default function Index() {
                           if (hasHTMLTags) {
                             // Render HTML content safely
                             return (
-                              <div>
-                                <div className="max-w-full break-words">
-                                  {renderHTMLContent(answer, darkMode)}
-                                </div>
-                                {/* Show Hutech logo when no images are present */}
-                                {(!message.response?.related_content ||
-                                  message.response.related_content.length ===
-                                    0) && (
-                                  <div className="mt-4 flex items-center gap-2 opacity-70">
-                                    <img
-                                      src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                                      alt="Hutech Solutions"
-                                      className="h-6 w-auto"
-                                    />
-                                    <span className="text-xs text-gray-500">
-                                      Powered by Hutech AI
-                                    </span>
-                                  </div>
-                                )}
+                              <div className="max-w-full break-words">
+                                {renderHTMLContent(answer, darkMode)}
                               </div>
                             );
                           } else {
-                            // Process as markdown/plain text
-                            const formatted = formatAnswerText(answer, darkMode);
-                            return (
-                              <div>
-                                <div className="prose-sm text-gray-900 leading-relaxed max-w-full break-words">
-                                  {formatted.formattedText}
-                                </div>
-                                {/* Display slideshow for extracted images */}
-                                {formatted.slideshowImages && formatted.slideshowImages.length > 0 && (
-                                  <AutoImageSlideshow images={formatted.slideshowImages} />
-                                )}
-                                {/* Page links are now handled inline in the text, no separate section needed */}
-                                {/* Show Hutech logo when no images are present */}
-                                {(!message.response?.related_content ||
-                                  message.response.related_content.length ===
-                                    0) && (
-                                  <div className="mt-4 flex items-center gap-2 opacity-70">
-                                    <img
-                                      src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
-                                      alt="Hutech Solutions"
-                                      className="h-6 w-auto"
-                                    />
-                                    <span className="text-xs text-gray-500">
-                                      Powered by Hutech AI
-                                    </span>
+                            // Check if answer contains bullet points first
+                            const hasBulletPointsInAnswer =
+                              hasBulletPoints(answer);
+                            const hasMarkdownLinksinAnswer =
+                              hasMarkdownLinks(answer);
+
+                            if (hasBulletPointsInAnswer) {
+                              // Process as text with bullet points
+                              const formatted = formatAnswerText(
+                                answer,
+                                darkMode,
+                              );
+                              return (
+                                <div>
+                                  <div
+                                    className={`prose-sm leading-relaxed max-w-full break-words ${
+                                      darkMode
+                                        ? "text-gray-100"
+                                        : "text-gray-900"
+                                    }`}
+                                  >
+                                    {formatted.formattedText}
                                   </div>
-                                )}
-                              </div>
-                            );
+                                  {/* Display slideshow for extracted images - always show if available */}
+                                  {(showImages[message.id] ||
+                                    (typingMessageId !== message.id &&
+                                      typingMessageId !== null) ||
+                                    typingMessageId === null) &&
+                                    formatted.slideshowImages &&
+                                    formatted.slideshowImages.length > 0 && (
+                                      <AutoImageSlideshow
+                                        images={formatted.slideshowImages}
+                                      />
+                                    )}
+                                </div>
+                              );
+                            } else if (hasMarkdownLinksinAnswer) {
+                              // Parse and render markdown links
+                              const parsedContent = parseMarkdownLinks(answer);
+                              return (
+                                <div
+                                  className={`prose-sm leading-relaxed max-w-full break-words ${
+                                    darkMode ? "text-gray-100" : "text-gray-900"
+                                  }`}
+                                >
+                                  {parsedContent.map((part, index) => (
+                                    <span key={index}>{part}</span>
+                                  ))}
+                                </div>
+                              );
+                            } else {
+                              // Process as regular markdown/plain text
+                              const formatted = formatAnswerText(
+                                answer,
+                                darkMode,
+                              );
+                              return (
+                                <div>
+                                  <div
+                                    className={`prose-sm leading-relaxed max-w-full break-words ${
+                                      darkMode
+                                        ? "text-gray-100"
+                                        : "text-gray-900"
+                                    }`}
+                                  >
+                                    {formatted.formattedText}
+                                  </div>
+                                  {/* Display slideshow for extracted images - always show if available */}
+                                  {(showImages[message.id] ||
+                                    (typingMessageId !== message.id &&
+                                      typingMessageId !== null) ||
+                                    typingMessageId === null) &&
+                                    formatted.slideshowImages &&
+                                    formatted.slideshowImages.length > 0 && (
+                                      <AutoImageSlideshow
+                                        images={formatted.slideshowImages}
+                                      />
+                                    )}
+                                </div>
+                              );
+                            }
                           }
                         })()}
                       </div>
 
-                      {/* Show related content only after typing is complete - using new stacked carousel */}
+                      {/* 2. RELATED CONTENT SECTION - Show after typing is complete */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.related_content &&
                         message.response.related_content.length > 0 && (
-                          <StackedImageCarousel
+                          <HorizontalScrollableCards
                             content={message.response.related_content}
                             isDarkMode={darkMode}
                           />
                         )}
 
-                      {/* File download links when file_links are present */}
+                      {/* 3. FILE LINKS SECTION - Small vertical cards */}
                       {(showImages[message.id] ||
                         (typingMessageId !== message.id &&
                           typingMessageId !== null) ||
                         typingMessageId === null) &&
                         message.response?.file_links &&
                         message.response.file_links.length > 0 && (
-                          <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <h6 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14,2 14,8 20,8" />
-                                <line x1="16" y1="13" x2="8" y2="13" />
-                                <line x1="16" y1="17" x2="8" y2="17" />
-                                <polyline points="10,9 9,9 8,9" />
-                              </svg>
-                              Available Files
-                            </h6>
+                          <div className="mt-4 max-h-40 overflow-y-auto scrollbar-hide">
                             <div className="space-y-2">
                               {message.response.file_links
-                                .filter(link => link && (typeof link === 'string' || (typeof link === 'object' && link.url)))
+                                .filter(
+                                  (link) =>
+                                    link &&
+                                    (typeof link === "string" ||
+                                      (typeof link === "object" && link.url)),
+                                )
                                 .map((link, index) => {
                                   // Handle both old format (string) and new format (object with title and url)
-                                  const href = typeof link === 'string' ? link : link.url;
-                                  const title = typeof link === 'string'
-                                    ? (link.split("/").pop() || `File ${index + 1}`)
-                                    : link.title;
-                                  const displayText = typeof link === 'string'
-                                    ? title
-                                    : `${title} - ${link.url}`;
+                                  const href =
+                                    typeof link === "string" ? link : link.url;
+                                  const title =
+                                    typeof link === "string"
+                                      ? link.split("/").pop() ||
+                                        `File ${index + 1}`
+                                      : link.title;
 
                                   return (
                                     <a
@@ -1667,31 +1818,60 @@ export default function Index() {
                                       href={href}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="flex items-center gap-2 p-3 bg-white rounded border hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group"
+                                      className={`block p-3 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer ${
+                                        darkMode
+                                          ? "bg-gray-800 border-gray-600 hover:border-gray-500 hover:bg-gray-700"
+                                          : "bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                                      }`}
                                     >
-                                      <svg
-                                        width="14"
-                                        height="14"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        className="text-blue-600 flex-shrink-0"
+                                      <span
+                                        className={`text-sm font-medium ${
+                                          darkMode
+                                            ? "text-gray-200 hover:text-blue-400"
+                                            : "text-gray-700 hover:text-blue-600"
+                                        }`}
                                       >
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                        <polyline points="7,10 12,15 17,10" />
-                                        <line x1="12" y1="15" x2="12" y2="3" />
-                                      </svg>
-                                      <span className="text-sm text-gray-700 group-hover:text-blue-600 flex-1 break-words">
-                                        {displayText}
-                                      </span>
-                                      <span className="text-xs text-gray-500 group-hover:text-blue-500 flex-shrink-0">
-                                        {typeof link === 'string' ? 'Download' : 'Open'}
+                                        {title}
                                       </span>
                                     </a>
                                   );
                                 })}
                             </div>
+                          </div>
+                        )}
+
+                      {/* 4. RECOMMENDATIONS SECTION - Show after typing is complete */}
+                      {(showImages[message.id] ||
+                        (typingMessageId !== message.id &&
+                          typingMessageId !== null) ||
+                        typingMessageId === null) &&
+                        message.response?.recommendations &&
+                        message.response.recommendations.length > 0 && (
+                          <div className="mt-4">
+                            <Recommendations
+                              recommendations={message.response.recommendations}
+                              onSelect={handleQuestionSubmit}
+                              isDarkMode={darkMode}
+                            />
+                          </div>
+                        )}
+
+                      {/* Show Hutech logo when no content is present */}
+                      {(!message.response?.related_content ||
+                        message.response.related_content.length === 0) &&
+                        (!message.response?.file_links ||
+                          message.response.file_links.length === 0) &&
+                        (!message.response?.recommendations ||
+                          message.response.recommendations.length === 0) && (
+                          <div className="mt-4 flex items-center gap-2 opacity-70">
+                            <img
+                              src="https://hutechsolutions.com/wp-content/uploads/2024/08/hutech-logo-1.svg"
+                              alt="Hutech Solutions"
+                              className="h-6 w-auto"
+                            />
+                            <span className="text-xs text-gray-500">
+                              Powered by Hutech AI
+                            </span>
                           </div>
                         )}
                     </div>
@@ -1777,7 +1957,9 @@ export default function Index() {
         />
 
         {/* Sticky Input Bar with integrated recommendations */}
-        <div className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}>
+        <div
+          className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}
+        >
           <div className="max-w-4xl mx-auto relative px-3 sm:px-4">
             {/* File Upload Inputs (Hidden) */}
             <input
@@ -1863,33 +2045,8 @@ export default function Index() {
               </div>
             )}
 
-            {/* Recommendations above search bar */}
-            {(recommendations.length > 0 || !isConversationMode) && (
-              <div className="mb-3">
-                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-                  {(recommendations.length > 0
-                    ? recommendations
-                    : [
-                        "What services do we provide?",
-                        "Where are our offices?",
-                        "What is our tech stack?",
-                        "What certifications do we have?",
-                      ]
-                  ).map((rec, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleQuestionSubmit(rec)}
-                      className={`flex-shrink-0 px-2 py-1 ${darkMode ? "bg-blue-900/50 hover:bg-blue-800 text-blue-200 border-blue-700/50" : "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"} rounded-md text-xs transition-all duration-200 transform hover:scale-105 border shadow-sm hover:shadow-md backdrop-blur-sm whitespace-nowrap`}
-                    >
-                      {rec}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div
-              className={`flex items-center gap-2 sm:gap-3 ${darkMode ? "bg-gray-700" : "bg-gray-100"} rounded-full p-2 sm:p-3 transition-all duration-500 ${isLoading ? "bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-blue-300 shadow-2xl scale-105 animate-pulse" : `${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"} hover:shadow-lg`} transform-gpu`}
+              className={`flex items-center gap-2 sm:gap-3 ${darkMode ? "bg-gray-700" : "bg-gray-100"} rounded-full p-2 sm:p-3 transition-all duration-300 ${isLoading ? "" : `${darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"} hover:shadow-lg`} transform-gpu`}
             >
               {/* Left side - Voice only */}
               <div className="flex items-center gap-1 sm:gap-2">
@@ -1997,7 +2154,8 @@ export default function Index() {
                       : "hover:scale-110 active:scale-95 hover:shadow-lg"
                   } text-white disabled:opacity-50 disabled:hover:scale-100 shadow-md`}
                   style={{
-                    backgroundColor: isLoading || isRecording ? undefined : "#1192EE"
+                    backgroundColor:
+                      isLoading || isRecording ? undefined : "#1192EE",
                   }}
                 >
                   {isLoading ? (
@@ -2230,7 +2388,9 @@ export default function Index() {
       )}
 
       {/* Sticky Input Bar */}
-      <div className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}>
+      <div
+        className={`pb-3 sm:pb-4 flex-shrink-0 fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl ${darkMode ? "bg-gray-900/80" : "bg-white/80"}`}
+      >
         <div className="max-w-4xl mx-auto relative px-3 sm:px-4">
           {/* File Upload Inputs (Hidden) */}
           <input
@@ -2378,7 +2538,8 @@ export default function Index() {
                     : "hover:scale-110 active:scale-95 hover:shadow-lg"
                 } text-white disabled:opacity-50 disabled:hover:scale-100 shadow-md`}
                 style={{
-                  backgroundColor: isLoading || isRecording ? undefined : "#1192EE"
+                  backgroundColor:
+                    isLoading || isRecording ? undefined : "#1192EE",
                 }}
               >
                 {isLoading ? (
