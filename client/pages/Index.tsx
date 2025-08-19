@@ -18,7 +18,11 @@ import { StackedImageCarousel } from "../components/StackedImageCarousel";
 import { HorizontalScrollableCards } from "../components/HorizontalScrollableCards";
 import { AutoImageSlideshow } from "../components/AutoImageSlideshow";
 import { Recommendations } from "../components/Recommendations";
-import { parseMarkdownLinks, hasMarkdownLinks, hasBulletPoints } from "../lib/markdownUtils";
+import {
+  parseMarkdownLinks,
+  hasMarkdownLinks,
+  hasBulletPoints,
+} from "../lib/markdownUtils";
 
 // Type definitions for the backend response
 interface RelatedContent {
@@ -935,12 +939,24 @@ export default function Index() {
           '<a$1href="$2"$3 target="_blank" rel="noopener noreferrer">',
         )
         // Enhance headings with proper spacing
-        .replace(/<h([1-6])([^>]*?)>/gi, '<h$1$2 style="margin: 16px 0 8px 0; font-weight: bold;">')
+        .replace(
+          /<h([1-6])([^>]*?)>/gi,
+          '<h$1$2 style="margin: 16px 0 8px 0; font-weight: bold;">',
+        )
         // Enhance paragraphs with proper spacing
-        .replace(/<p([^>]*?)>/gi, '<p$1 style="margin: 8px 0; line-height: 1.6;">')
+        .replace(
+          /<p([^>]*?)>/gi,
+          '<p$1 style="margin: 8px 0; line-height: 1.6;">',
+        )
         // Enhance lists with proper spacing
-        .replace(/<ul([^>]*?)>/gi, '<ul$1 style="margin: 8px 0; padding-left: 20px;">')
-        .replace(/<ol([^>]*?)>/gi, '<ol$1 style="margin: 8px 0; padding-left: 20px;">')
+        .replace(
+          /<ul([^>]*?)>/gi,
+          '<ul$1 style="margin: 8px 0; padding-left: 20px;">',
+        )
+        .replace(
+          /<ol([^>]*?)>/gi,
+          '<ol$1 style="margin: 8px 0; padding-left: 20px;">',
+        )
         .replace(/<li([^>]*?)>/gi, '<li$1 style="margin: 4px 0;">');
 
       // Clean up link text in HTML content
@@ -1164,14 +1180,16 @@ export default function Index() {
       });
     } else {
       // First, split text by * ** pattern to create bullet points
-      const bulletSplitText = processedText.replace(/\s*\*\s*\*\*/g, '\n* **');
-      const lines = bulletSplitText.split(/\\n|\n/).filter((line) => line.trim());
+      const bulletSplitText = processedText.replace(/\s*\*\s*\*\*/g, "\n* **");
+      const lines = bulletSplitText
+        .split(/\\n|\n/)
+        .filter((line) => line.trim());
 
       lines.forEach((line, index) => {
         // Handle special bullet points: * **text**
         if (line.trim().match(/^\*\s*\*\*/)) {
           // Extract everything after * ** including the bold part and any text after
-          const content = line.trim().replace(/^\*\s*\*\*/, '');
+          const content = line.trim().replace(/^\*\s*\*\*/, "");
 
           // Process the content to handle bold formatting
           const processedContent = content
@@ -1671,18 +1689,26 @@ export default function Index() {
                             );
                           } else {
                             // Check if answer contains bullet points first
-                            const hasBulletPointsInAnswer = hasBulletPoints(answer);
+                            const hasBulletPointsInAnswer =
+                              hasBulletPoints(answer);
                             const hasMarkdownLinksinAnswer =
                               hasMarkdownLinks(answer);
 
                             if (hasBulletPointsInAnswer) {
                               // Process as text with bullet points
-                              const formatted = formatAnswerText(answer, darkMode);
+                              const formatted = formatAnswerText(
+                                answer,
+                                darkMode,
+                              );
                               return (
                                 <div>
-                                  <div className={`prose-sm leading-relaxed max-w-full break-words ${
-                                    darkMode ? "text-gray-100" : "text-gray-900"
-                                  }`}>
+                                  <div
+                                    className={`prose-sm leading-relaxed max-w-full break-words ${
+                                      darkMode
+                                        ? "text-gray-100"
+                                        : "text-gray-900"
+                                    }`}
+                                  >
                                     {formatted.formattedText}
                                   </div>
                                   {/* Display slideshow for extracted images - always show if available */}
@@ -1692,8 +1718,10 @@ export default function Index() {
                                     typingMessageId === null) &&
                                     formatted.slideshowImages &&
                                     formatted.slideshowImages.length > 0 && (
-                                    <AutoImageSlideshow images={formatted.slideshowImages} />
-                                  )}
+                                      <AutoImageSlideshow
+                                        images={formatted.slideshowImages}
+                                      />
+                                    )}
                                 </div>
                               );
                             } else if (hasMarkdownLinksinAnswer) {
